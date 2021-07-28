@@ -10,6 +10,8 @@ import android.content.Intent
 import androidx.appcompat.app.AlertDialog
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.util.Log
+import kotlinx.android.synthetic.main.content_input.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mRealm: Realm
@@ -88,6 +90,23 @@ class MainActivity : AppCompatActivity() {
             dialog.show()
 
             true
+        }
+
+        seach_button.setOnClickListener {
+
+            if (editCategory.text.toString() == "" ) {
+                reloadListView()
+            } else {
+                val search = mRealm.where(Task::class.java).equalTo("category", editCategory.text.toString() ).findAll()
+                // 上記の結果を、TaskListとしてセットする
+                mTaskAdapter.mTaskList = mRealm.copyFromRealm(search)
+
+                // TaskのListView用のアダプタに渡す
+                listView1.adapter = mTaskAdapter
+
+                // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+                mTaskAdapter.notifyDataSetChanged()
+            }
         }
 
         reloadListView()
